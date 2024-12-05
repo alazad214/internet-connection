@@ -1,41 +1,34 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection/internet_popup.dart';
+import 'package:internet_connection/common_widgets/internet_popup.dart';
 
 class InternetController extends GetxController {
+  //INSTANCE CREATE...
   final Connectivity connectivity = Connectivity();
 
   @override
   void onInit() {
     super.onInit();
-    print("InternetController initialized");
     connectivity.onConnectivityChanged
         .listen((List<ConnectivityResult> resultList) {
       if (resultList.isNotEmpty) {
         ConnectivityResult result = resultList.first;
-        _updateNetworkStatus(result);
+        internetStatus(result);
       } else {
-        _updateNetworkStatus(ConnectivityResult.none);
+        internetStatus(ConnectivityResult.none);
       }
     });
   }
 
-  void _updateNetworkStatus(ConnectivityResult result) {
-    print("Network status changed: $result");
-
+  void internetStatus(ConnectivityResult result) {
     if (result == ConnectivityResult.none) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!Get.isSnackbarOpen) {
-          print("Showing snackbar for no internet connection");
           Get.rawSnackbar(
-            titleText: SizedBox(
-              width: double.infinity,
-              height: Get.size.height / 1.1,
-              child: const Align(
-                alignment: Alignment.bottomCenter,
-                child: NoInternetConnection(),
-              ),
+            titleText: const Align(
+              alignment: Alignment.center,
+              child: InternetPopup(),
             ),
             messageText: Container(),
             backgroundColor: Colors.transparent,
@@ -46,7 +39,6 @@ class InternetController extends GetxController {
       });
     } else {
       if (Get.isSnackbarOpen) {
-        print("Closing the snackbar");
         Get.closeCurrentSnackbar();
       }
     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection/home_screen.dart';
+import 'package:internet_connection/features/home_screen.dart';
 
-import 'internet_controller.dart';
+import 'controllers/internet_controller.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return const GetMaterialApp(
       title: 'Internet Connection Check',
       debugShowCheckedModeBanner: false,
       home: HomeScreen(),
