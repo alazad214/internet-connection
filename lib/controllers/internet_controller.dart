@@ -1,10 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection/common_widgets/internet_popup.dart';
+import 'package:internet_connection/custom_popup.dart';
 
 class InternetController extends GetxController {
-  //INSTANCE CREATE...
   final Connectivity connectivity = Connectivity();
 
   @override
@@ -13,8 +12,7 @@ class InternetController extends GetxController {
     connectivity.onConnectivityChanged
         .listen((List<ConnectivityResult> resultList) {
       if (resultList.isNotEmpty) {
-        ConnectivityResult result = resultList.first;
-        internetStatus(result);
+        internetStatus(resultList.first);
       } else {
         internetStatus(ConnectivityResult.none);
       }
@@ -25,16 +23,7 @@ class InternetController extends GetxController {
     if (result == ConnectivityResult.none) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!Get.isSnackbarOpen) {
-          Get.rawSnackbar(
-            titleText: const Align(
-              alignment: Alignment.center,
-              child: InternetPopup(),
-            ),
-            messageText: Container(),
-            backgroundColor: Colors.transparent,
-            isDismissible: false,
-            duration: const Duration(days: 1),
-          );
+          customPopup(Get.context!, retryConnection);
         }
       });
     } else {
@@ -42,5 +31,15 @@ class InternetController extends GetxController {
         Get.closeCurrentSnackbar();
       }
     }
+  }
+
+  void retryConnection() {
+    connectivity.checkConnectivity().then((resultList) {
+      if (resultList.isNotEmpty) {
+        internetStatus(resultList.first);
+      } else {
+        internetStatus(ConnectivityResult.none);
+      }
+    });
   }
 }
